@@ -1,4 +1,4 @@
-import { Track, Artist, User, InsertTrack, InsertArtist, InsertUser } from "@shared/schema";
+import { Track, Artist, User, InsertTrack, InsertArtist, InsertUser, artists } from "@shared/schema";
 
 export interface IStorage {
   // Tracks
@@ -24,7 +24,23 @@ export class MemStorage implements IStorage {
 
   constructor() {
     this.tracks = new Map();
+    const track:Track = {
+      id: 1,
+      title: "Dissolving",
+      artistId: 1,
+      albumCover: "static/images/albums/1.png",
+      duration: 180,
+      audioUrl: "static/audio/1.mp3",
+    };
+    this.tracks.set(track.id, track);
     this.artists = new Map();
+    const artist:Artist = {
+      id: 1,
+      name: "Btrax",
+      profileImage: "static/images/artists/1.png",
+      walletAddress: "0x1234567890abcdef",
+    };
+    this.artists.set(artist.id, artist);
     this.users = new Map();
     this.currentId = 1;
   }

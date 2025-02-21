@@ -12,7 +12,7 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Discover} />
+      <Route path="/discover" component={Discover} />
       <Route path="/search" component={Search} />
       <Route path="/library" component={Library} />
       <Route path="/track/:id" component={Track} />

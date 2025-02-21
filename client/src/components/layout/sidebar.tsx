@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", icon: Home, label: "Discover" },
+  { href: "/discover", icon: Home, label: "Discover" },
   { href: "/search", icon: Search, label: "Search" },
   { href: "/library", icon: Library, label: "Library" },
 ];

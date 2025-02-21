@@ -3,8 +3,11 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+app.use('/static', express.static('static'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -67,3 +70,4 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
   });
 })();
+

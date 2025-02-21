@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { init, requestProvider, launchModal, launchPaymentModal, closeModal } from '@getalby/bitcoin-connect-react';
+import { init, launchModal, launchPaymentModal, closeModal, onConnected } from '@getalby/bitcoin-connect-react';
 import { LightningAddress } from "@getalby/lightning-tools";
+import { bech32 } from "bech32";
 
 export interface WalletConnection {
   walletPubkey: string;
@@ -33,23 +34,20 @@ class NWCWalletService {
         }
       },
     });
-  }
 
-  async connect(): Promise<WalletConnection> {
-    try {
-      this.provider = await requestProvider();
-      const info = await this.provider.getInfo();
-      
-      this.connection = {
-        walletPubkey: info.publicKey,
-        isConnected: true,
-      };
-
-      return this.connection;
-    } catch (error) {
-      console.error("Failed to connect wallet:", error);
-      throw new Error("Failed to connect wallet");
-    }
+    onConnected(async (provider) => {
+      try {
+        this.provider = provider;
+        const info = await this.provider.getInfo();
+        
+        this.connection = {
+          walletPubkey: info.publicKey,
+          isConnected: true,
+        };
+      } catch (error) {
+        console.error("Failed to connect wallet:", error);
+      }
+    });
   }
 
   async disconnect(): Promise<void> {
@@ -58,7 +56,36 @@ class NWCWalletService {
     closeModal();
   }
 
-  async makePayment(amount: number, recipient: string): Promise<boolean> {
+  async pay(amount: number, recipient: string): Promise<void> {
+    if (!this.connection) {
+      throw new Error("Wallet not connected");
+    }
+
+    console.log("Recipient", recipient);
+    const ln = new LightningAddress(recipient);
+    await ln.fetch();
+    
+    try {
+      await this.provider.keysend({
+        destination: ln.keysendData?.destination,
+        amount,
+        customRecords: {
+          696969: this.encodeBech32("npub", recipient)
+        },
+      });
+    } catch (error) {
+      console.error("Payment failed:", error);
+      throw new Error("Payment failed");
+    }
+  }
+
+  encodeBech32(prefix: string, inputString: string): string {
+    const encoder = new TextEncoder();
+    const words = bech32.toWords(encoder.encode(inputString));
+    return bech32.encode(prefix, words);
+  }
+
+  async payInvoice(amount: number, recipient: string): Promise<boolean> {
     if (!this.connection) {
       throw new Error("Wallet not connected");
     }
@@ -87,13 +114,8 @@ class NWCWalletService {
     }
   }
 
-  async showConnectModal() {
-    launchModal();
-  }
-
-  async connectWithModal(): Promise<WalletConnection> {
-    this.showConnectModal();
-    return this.connect();
+  async launchModal(): Promise<void> {
+    await launchModal();
   }
 
   getConnection(): WalletConnection | null {

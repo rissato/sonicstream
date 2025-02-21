@@ -14,7 +14,7 @@ export function Player() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [_, setPlayTime] = useState(0);
   const [hasTriggeredPayment, setHasTriggeredPayment] = useState(false);
-  const [location, navigate] = useLocation();
+  const [__, navigate] = useLocation();
 
   // Update progress bar during playback
   useEffect(() => {
@@ -87,13 +87,8 @@ export function Player() {
     }
 
     try {
-      await nwc.walletService.makePayment(21, "cyphercosmo@getalby.com");
       setHasTriggeredPayment(true);
-      // Play lightning animation
-      const element = document.createElement('div');
-      element.className = 'lightning-animation';
-      document.body.appendChild(element);
-      setTimeout(() => element.remove(), 1000);
+      await nwc.walletService.pay(21, "cyphercosmo@getalby.com");
     } catch (error) {
       console.error('Payment failed:', error);
       // Optionally handle payment failure
@@ -117,7 +112,7 @@ export function Player() {
             size="default" 
             className="bg-yellow-500 hover:bg-yellow-600 flex gap-2"
             onClick={() => {
-              nwc.walletService.makePayment(21, "cyphercosmo@getalby.com")
+              nwc.walletService.payInvoice(21, "cyphercosmo@getalby.com")
                 .catch(err => console.error("Payment failed:", err));
             }}
           >

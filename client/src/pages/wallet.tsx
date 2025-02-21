@@ -10,7 +10,7 @@ export default function Wallet() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setIsConnected(nwc.walletService.getConnection() !== null);
-    }, 1000); // Check every second
+    }, 200);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -47,7 +47,7 @@ export default function Wallet() {
           </Button>
         ) : (
           <Button
-            onClick={() => nwc.walletService.connectWithModal()}
+            onClick={() => nwc.walletService.launchModal()}
             className="font-medium flex items-center gap-2"
           >
             <img src={nwcLogo} alt="NWC Logo" className="w-5 h-5" />

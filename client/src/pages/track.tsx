@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import { mockTracks, mockArtists } from "@/lib/mock-data";
-import { ZapPaymentDialog } from "@/components/zap-payment-dialog";
 
 export default function Track() {
   const { id } = useParams();

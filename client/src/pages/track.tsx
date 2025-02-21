@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "wouter";
+import { Button } from "@/components/ui/button";
 import { mockTracks, mockArtists } from "@/lib/mock-data";
 import { ZapPaymentDialog } from "@/components/zap-payment-dialog";
 
@@ -31,12 +32,15 @@ export default function Track() {
           <div>
             <h1 className="text-4xl font-bold mb-2">{track.title}</h1>
             <div className="flex items-center gap-4 mb-6">
-              <img
-                src={artist.profileImage}
-                alt={artist.name}
-                className="w-12 h-12 rounded-full"
-              />
-              <h2 className="text-xl">{artist.name}</h2>
+              <div className="flex items-center gap-4">
+                <img
+                  src={artist.profileImage}
+                  alt={artist.name}
+                  className="w-12 h-12 rounded-full"
+                />
+                <h2 className="text-xl">{artist.name}</h2>
+              </div>
+              <ZapPaymentDialog artist={artist} />
             </div>
           </div>
 
@@ -44,7 +48,6 @@ export default function Track() {
             <Button className="w-full">
               Play Track
             </Button>
-            <ZapPaymentDialog artist={artist} />
           </div>
         </div>
       </div>

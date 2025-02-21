@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,9 +12,10 @@ import { useWallet } from "@/lib/wallet-context";
 
 export function WalletButton() {
   const { connection, isConnecting, connect, disconnect } = useWallet();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <Dialog>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
           variant={connection ? "outline" : "default"}
@@ -24,21 +26,31 @@ export function WalletButton() {
           {connection ? "Connected" : isConnecting ? "Connecting..." : "Connect Wallet"}
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Connect your NWC Wallet</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
+          <p className="text-sm text-muted-foreground">
+            Connect your NWC wallet to support artists and access premium features.
+          </p>
           <Button
             className="w-full"
-            onClick={() => connection ? disconnect() : connect()}
+            onClick={() => {
+              if (connection) {
+                disconnect();
+              } else {
+                connect();
+              }
+              setDialogOpen(false);
+            }}
             disabled={isConnecting}
           >
             {connection ? "Disconnect" : isConnecting ? "Connecting..." : "Connect"} Wallet
           </Button>
           {connection && (
             <div className="p-4 rounded-lg bg-muted">
-              <p className="text-sm font-mono">{connection.walletPubkey}</p>
+              <p className="text-sm font-mono break-all">{connection.walletPubkey}</p>
             </div>
           )}
         </div>

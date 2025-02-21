@@ -17,7 +17,10 @@ export default defineConfig({
     },
     hmr: {
       overlay: true,
-      timeout: 5000
+      timeout: 5000,
+      port: 5000,
+      protocol: 'ws',
+      host: 'localhost'
     }
   },
   plugins: [
@@ -36,7 +39,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client", "src"),
-      "@shared": path.resolve(__dirname, "shared"),
+      "@shared": path.resolve(__dirname, "shared")
     },
   },
   root: path.resolve(__dirname, "client"),

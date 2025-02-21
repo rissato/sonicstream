@@ -1,10 +1,6 @@
 import { z } from "zod";
 import { init, requestProvider, launchModal, launchPaymentModal, closeModal } from '@getalby/bitcoin-connect-react';
-
-init({
-  appName: "Sonic Stream",
-  filters: ["nwc"],
-});
+import { LightningAddress } from "@getalby/lightning-tools";
 
 export interface WalletConnection {
   walletPubkey: string;
@@ -19,6 +15,25 @@ export const walletConnectionSchema = z.object({
 class NWCWalletService {
   private connection: WalletConnection | null = null;
   private provider: any = null;
+
+  constructor() {
+    init({
+      appName: "Sonic Stream",
+      filters: ["nwc"],
+      showBalance: false,
+      providerConfig: {
+        nwc: {
+          authorizationUrlOptions: {
+            name: "Sonic Stream",
+            requestMethods: ["make_invoice", "pay_invoice", "get_info"],
+            budgetRenewal: "monthly",
+            maxAmount: 1000,
+            editable: true
+          }
+        }
+      },
+    });
+  }
 
   async connect(): Promise<WalletConnection> {
     try {
@@ -48,10 +63,14 @@ class NWCWalletService {
       throw new Error("Wallet not connected");
     }
 
+    const ln = new LightningAddress(recipient);
+    await ln.fetch();
+    const invoice = await ln.requestInvoice({ satoshi: amount });
+
     try {
       // Launch payment modal with the invoice
       const { setPaid } = await launchPaymentModal({
-        invoice: recipient, // Assuming recipient is a BOLT11 invoice
+        invoice: invoice.paymentRequest, // Assuming recipient is a BOLT11 invoice
         onPaid: (response) => {
           console.log("Payment successful:", response.preimage);
           setPaid({ preimage: response.preimage });
@@ -71,6 +90,11 @@ class NWCWalletService {
 
   async showConnectModal(): Promise<void> {
     await launchModal();
+  }
+
+  async connectWithModal(): Promise<WalletConnection> {
+    await this.showConnectModal();
+    return this.connect();
   }
 
   getConnection(): WalletConnection | null {

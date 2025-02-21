@@ -8,7 +8,7 @@ import Search from "@/pages/search";
 import Library from "@/pages/library";
 import Track from "@/pages/track";
 import NotFound from "@/pages/not-found";
-import Subscribe from "@/pages/subscribe";
+import Wallet from "@/pages/wallet";
 
 function Router() {
   return (
@@ -17,7 +17,7 @@ function Router() {
       <Route path="/search" component={Search} />
       <Route path="/library" component={Library} />
       <Route path="/track/:id" component={Track} />
-      <Route path="/subscribe" component={Subscribe} />
+      <Route path="/wallet" component={Wallet} />
       <Route component={NotFound} />
     </Switch>
   );

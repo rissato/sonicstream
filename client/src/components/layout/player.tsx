@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Volume2, Zap } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
+import * as nwc from "@/lib/nwc";
 
 export function Player() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -54,8 +55,8 @@ export function Player() {
   return (
     <div className="fixed bottom-0 left-0 right-0 h-20 bg-card border-t border-border px-4">
       <audio ref={audioRef} src="/static/audio/1.m4a" crossOrigin="anonymous"/>
-      <div className="h-full flex items-center justify-between max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 w-1/3">
+      <div className="h-full flex items-center justify-between max-w-7xl mx-auto px-4">
+        <div className="flex items-center gap-4 w-[300px]">
           <img
             src="/static/images/albums/1.png"
             alt="Album cover"
@@ -65,9 +66,20 @@ export function Player() {
             <h4 className="font-medium">Dissolving</h4>
             <p className="text-sm text-muted-foreground">Btrax</p>
           </div>
+          <Button 
+            size="default" 
+            className="bg-yellow-500 hover:bg-yellow-600 flex gap-2"
+            onClick={() => {
+              nwc.walletService.makePayment(21, "cyphercosmo@getalby.com")
+                .catch(err => console.error("Payment failed:", err));
+            }}
+          >
+            <Zap className="h-5 w-5 text-white" />
+            <span className="text-white">Boost</span>
+          </Button>
         </div>
 
-        <div className="flex flex-col items-center w-1/3">
+        <div className="flex flex-col items-center flex-1 max-w-xl px-8">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon">
               <SkipBack className="h-5 w-5" />
@@ -97,7 +109,7 @@ export function Player() {
           />
         </div>
 
-        <div className="flex items-center gap-2 w-1/3 justify-end">
+        <div className="flex items-center gap-3 w-[200px] justify-end">
           <Volume2 className="h-5 w-5" />
           <Slider
             value={[volume]}

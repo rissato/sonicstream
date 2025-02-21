@@ -17,11 +17,12 @@ export function Player(props) {
   const [hasTriggeredPayment, setHasTriggeredPayment] = useState(false);
   const [__, navigate] = useLocation();
 
+  console.log("Player props:", props);
+
   const { data: artists } = useQuery({
     queryKey: ["/api/artists"],
   });
 
-  // Update progress bar during playback
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -32,16 +33,14 @@ export function Player(props) {
 
     audio.addEventListener('timeupdate', updateProgress);
     return () => audio.removeEventListener('timeupdate', updateProgress);
-  }, []);
+  }, [audioRef.current]);
 
-  // Handle volume changes
   useEffect(() => {
     if (audioRef.current) { 
       audioRef.current.volume = volume / 100;
     }
-  }, [volume]);
+  }, [volume, audioRef.current]);
 
-  // Add new useEffect for payment threshold
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -51,13 +50,14 @@ export function Player(props) {
       setPlayTime(currentTime);
 
       if (currentTime >= PAYMENT_THRESHOLD_SECONDS && !hasTriggeredPayment) {
+        console.log("Threshold reached, triggering payment");
         handlePaymentThreshold();
       }
     };
 
     audio.addEventListener('timeupdate', handleTimeUpdate);
     return () => audio.removeEventListener('timeupdate', handleTimeUpdate);
-  }, [hasTriggeredPayment]);
+  }, [hasTriggeredPayment, audioRef.current]);
 
   const togglePlayPause = () => {
     console.log("Toggle play/pause");
@@ -107,9 +107,12 @@ export function Player(props) {
 
   const artist = artists.find(artist => artist.id === props.track?.artistId);
   
+  if (!audioRef.current) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-0 left-0 right-0 h-20 bg-card border-t border-border px-4">
-      {/* <audio ref={audioRef} src="/static/audio/1.m4a" crossOrigin="anonymous"/> */}
       <audio ref={audioRef} crossOrigin="anonymous"
         src={props.track?.audioUrl}
       />

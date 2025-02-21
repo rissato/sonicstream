@@ -17,16 +17,17 @@ function Router(props) {
   
   return (
     <Switch>
-      {/* <Route path="/discover" component={Discover} /> */}
+      <Route path="/"
+        component={(props: RouteComponentProps) => (
+          <Discover {...props} setCurrentTrack={setCurrentTrack}/>
+        )} 
+      />
       <Route 
         path="/discover" 
         component={(props: RouteComponentProps) => (
           <Discover {...props} setCurrentTrack={setCurrentTrack}/>
         )} 
       />
-      <Route path="/search" component={Search} />
-      <Route path="/library" component={Library} />
-      {/* <Route path="/track/:id" component={Track} /> */}
       <Route 
         path="/track/:id" 
         component={(props: RouteComponentProps<{id: string}>) => (

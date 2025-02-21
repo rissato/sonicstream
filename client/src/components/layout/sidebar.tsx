@@ -1,4 +1,4 @@
-import { Home, Search, Library, Wallet } from "lucide-react";
+import { Home, Search, Library, Wallet, ShoppingCart } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 
@@ -6,6 +6,7 @@ const navItems = [
   { href: "/discover", icon: Home, label: "Discover" },
   { href: "/search", icon: Search, label: "Search" },
   { href: "/library", icon: Library, label: "Library" },
+  { href: "/subscribe", icon: ShoppingCart, label: "Subscribe"}
 ];
 
 export function Sidebar() {

@@ -9,6 +9,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
+  server: {
+    watch: {
+      usePolling: true,
+      interval: 100,
+      ignored: ['**/node_modules/**', '**/dist/**']
+    },
+    hmr: {
+      overlay: true,
+      timeout: 5000
+    }
+  },
   plugins: [
     react(),
     runtimeErrorOverlay(),

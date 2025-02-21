@@ -39,7 +39,6 @@ export default function Track() {
                 />
                 <h2 className="text-xl">{artist.name}</h2>
               </div>
-              <ZapPaymentDialog artist={artist} />
             </div>
           </div>
 

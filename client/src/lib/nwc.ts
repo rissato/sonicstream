@@ -1,4 +1,10 @@
 import { z } from "zod";
+import { init, requestProvider, launchModal, launchPaymentModal, closeModal } from '@getalby/bitcoin-connect-react';
+
+init({
+  appName: "Sonic Stream",
+  filters: ["nwc"],
+});
 
 export interface WalletConnection {
   walletPubkey: string;
@@ -12,15 +18,18 @@ export const walletConnectionSchema = z.object({
 
 class NWCWalletService {
   private connection: WalletConnection | null = null;
+  private provider: any = null;
 
   async connect(): Promise<WalletConnection> {
     try {
-      // TODO: Implement actual NWC wallet connection
-      // For now, return mock data
+      this.provider = await requestProvider();
+      const info = await this.provider.getInfo();
+      
       this.connection = {
-        walletPubkey: "npub1qqqqqqyz0la75qqlx4f7gxjwq3ewx4qm9xhz0xhh8wh6gvqajhsvqxp0k",
+        walletPubkey: info.publicKey,
         isConnected: true,
       };
+
       return this.connection;
     } catch (error) {
       console.error("Failed to connect wallet:", error);
@@ -30,6 +39,8 @@ class NWCWalletService {
 
   async disconnect(): Promise<void> {
     this.connection = null;
+    this.provider = null;
+    closeModal();
   }
 
   async makePayment(amount: number, recipient: string): Promise<boolean> {
@@ -38,22 +49,28 @@ class NWCWalletService {
     }
 
     try {
-      // TODO: Implement actual NWC zap payment
-      console.log(`Sending ${amount} sats to ${recipient} via zap`);
-
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // For testing, succeed if amount is valid
-      if (amount <= 0) {
-        throw new Error("Invalid amount");
-      }
+      // Launch payment modal with the invoice
+      const { setPaid } = await launchPaymentModal({
+        invoice: recipient, // Assuming recipient is a BOLT11 invoice
+        onPaid: (response) => {
+          console.log("Payment successful:", response.preimage);
+          setPaid({ preimage: response.preimage });
+          return true;
+        },
+        onCancelled: () => {
+          throw new Error("Payment cancelled");
+        }
+      });
 
       return true;
     } catch (error) {
-      console.error("Zap payment failed:", error);
+      console.error("Payment failed:", error);
       throw new Error("Payment failed");
     }
+  }
+
+  async showConnectModal(): Promise<void> {
+    await launchModal();
   }
 
   getConnection(): WalletConnection | null {

@@ -1,4 +1,4 @@
-import { Home, Search, Library } from "lucide-react";
+import { Home, Search, Library, Wallet } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { WalletButton } from "../wallet-button";
 import { cn } from "@/lib/utils";
@@ -22,16 +22,16 @@ export function Sidebar() {
 
       <nav className="space-y-2">
         {navItems.map((item) => (
-          <Link 
-            key={item.href} 
-            href={item.href} 
-            className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer no-underline",
-              location === item.href && "bg-accent text-foreground"
-            )}
-          >
-            <item.icon className="h-5 w-5" />
-            <span>{item.label}</span>
+          <Link key={item.href} href={item.href}>
+            <a
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors",
+                location === item.href && "bg-accent text-foreground"
+              )}
+            >
+              <item.icon className="h-5 w-5" />
+              {item.label}
+            </a>
           </Link>
         ))}
       </nav>

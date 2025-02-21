@@ -68,9 +68,8 @@ class NWCWalletService {
     const invoice = await ln.requestInvoice({ satoshi: amount });
 
     try {
-      // Launch payment modal with the invoice
       const { setPaid } = await launchPaymentModal({
-        invoice: invoice.paymentRequest, // Assuming recipient is a BOLT11 invoice
+        invoice: invoice.paymentRequest,
         onPaid: (response) => {
           console.log("Payment successful:", response.preimage);
           setPaid({ preimage: response.preimage });
@@ -88,12 +87,12 @@ class NWCWalletService {
     }
   }
 
-  async showConnectModal(): Promise<void> {
-    await launchModal();
+  async showConnectModal() {
+    launchModal();
   }
 
   async connectWithModal(): Promise<WalletConnection> {
-    await this.showConnectModal();
+    this.showConnectModal();
     return this.connect();
   }
 

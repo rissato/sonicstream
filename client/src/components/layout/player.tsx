@@ -4,10 +4,11 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import * as nwc from "@/lib/nwc";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 
 const PAYMENT_THRESHOLD_SECONDS = 1;
 
-export function Player() {
+export function Player(props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(80);
@@ -15,6 +16,10 @@ export function Player() {
   const [_, setPlayTime] = useState(0);
   const [hasTriggeredPayment, setHasTriggeredPayment] = useState(false);
   const [__, navigate] = useLocation();
+
+  const { data: artists } = useQuery({
+    queryKey: ["/api/artists"],
+  });
 
   // Update progress bar during playback
   useEffect(() => {
@@ -94,19 +99,34 @@ export function Player() {
       // Optionally handle payment failure
     }
 
-  };  return (
+  };  
+
+  if (!artists) {
+    return null;
+  }
+
+  const artist = artists.find(artist => artist.id === props.track?.artistId);
+  
+  return (
     <div className="fixed bottom-0 left-0 right-0 h-20 bg-card border-t border-border px-4">
-      <audio ref={audioRef} src="/static/audio/1.m4a" crossOrigin="anonymous"/>
+      {/* <audio ref={audioRef} src="/static/audio/1.m4a" crossOrigin="anonymous"/> */}
+      <audio ref={audioRef} crossOrigin="anonymous"
+        src={props.track?.audioUrl}
+      />
       <div className="h-full flex items-center justify-between max-w-7xl mx-auto px-4">
         <div className="flex items-center gap-4 w-[300px]">
           <img
-            src="/static/images/albums/1.png"
-            alt="Album cover"
+            src={props.track?.albumCover}
+            alt={props.track?.title || ""}
             className="h-12 w-12 rounded-md"
           />
           <div>
-            <h4 className="font-medium">Dissolving</h4>
-            <p className="text-sm text-muted-foreground">Btrax</p>
+            <h4 className="font-medium">
+              {props.track?.title || ""}
+            </h4>
+            <p className="text-sm text-muted-foreground">
+              {artist?.name || ""}
+            </p>
           </div>
           <Button 
             size="default" 

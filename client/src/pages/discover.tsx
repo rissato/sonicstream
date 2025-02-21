@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { mockTracks, mockArtists } from "@/lib/mock-data";
-import { Link } from "wouter";
+import { Link, RouteComponentProps } from "wouter";
+import { Track } from "@shared/schema";
 
-export default function Discover() {
+interface DiscoverProps extends RouteComponentProps {
+  setCurrentTrack?: (track: Track) => void;
+}
+
+export default function Discover({ params, setCurrentTrack }: DiscoverProps) {
+
   const { data: tracks = mockTracks } = useQuery({
     queryKey: ["/api/tracks"],
   });
@@ -17,7 +23,7 @@ export default function Discover() {
       <section>
         <h2 className="text-3xl font-bold mb-6">Featured Tracks</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {tracks.map((track) => (
+          {tracks.map((track: Track) => (
             <Link key={track.id} href={`/track/${track.id}`}>
               <Card className="hover:bg-accent transition-colors cursor-pointer">
                 <CardContent className="p-4">

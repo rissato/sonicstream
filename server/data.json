@@ -1,0 +1,28 @@
+{
+    "tracks": [
+      {
+        "id": 1,
+        "title": "Dissolving",
+        "artistId": 1,
+        "albumCover": "/static/images/albums/1.png",
+        "duration": 180,
+        "audioUrl": "/static/audio/1.m4a"
+      },
+      {
+        "id": 2,
+        "title": "Jumpbot 2000",
+        "artistId": 1,
+        "albumCover": "/static/images/albums/2.png",
+        "duration": 180,
+        "audioUrl": "/static/audio/2.m4a"
+      }
+    ],
+    "artists": [
+      {
+        "id": 1,
+        "name": "Btrax",
+        "profileImage": "/static/images/artists/1.png",
+        "walletAddress": "0x1234567890abcdef"
+      }
+    ]
+  }

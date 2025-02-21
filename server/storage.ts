@@ -1,4 +1,7 @@
-import { Track, Artist, User, InsertTrack, InsertArtist, InsertUser, artists } from "@shared/schema";
+import { Track, Artist, User, InsertTrack, InsertArtist, InsertUser } from "@shared/schema";
+import data from './data.json';
+import { log } from "./vite";
+
 
 export interface IStorage {
   // Tracks
@@ -23,26 +26,10 @@ export class MemStorage implements IStorage {
   private currentId: number;
 
   constructor() {
-    this.tracks = new Map();
-    const track:Track = {
-      id: 1,
-      title: "Dissolving",
-      artistId: 1,
-      albumCover: "static/images/albums/1.png",
-      duration: 180,
-      audioUrl: "static/audio/1.mp3",
-    };
-    this.tracks.set(track.id, track);
-    this.artists = new Map();
-    const artist:Artist = {
-      id: 1,
-      name: "Btrax",
-      profileImage: "static/images/artists/1.png",
-      walletAddress: "0x1234567890abcdef",
-    };
-    this.artists.set(artist.id, artist);
+    this.tracks = new Map(data.tracks.map(track => [track.id, track]));
+    this.artists = new Map(data.artists.map(artist => [artist.id, artist]));
     this.users = new Map();
-    this.currentId = 1;
+    this.currentId = Math.max(...data.tracks.map(t => t.id), ...data.artists.map(a => a.id), 1);
   }
 
   async getTracks(): Promise<Track[]> {
@@ -50,6 +37,7 @@ export class MemStorage implements IStorage {
   }
 
   async getTrack(id: number): Promise<Track | undefined> {
+    log("Getting track with id:", id);
     return this.tracks.get(id);
   }
 

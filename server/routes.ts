@@ -1,10 +1,19 @@
 import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
+import { log } from "./vite";
 
 export async function registerRoutes(app: Express) {
   // Tracks
+  app.get("/api/tracks/:id", async (req, res) => {
+    log("params", req.params[0]);
+    const track = await storage.getTrack(parseInt(req.params.id));
+    if (!track) return res.status(404).json({ message: "Track not found" });
+    res.json(track);
+  });
+
   app.get("/api/tracks", async (req, res) => {
+    log("Getting tracks");
     const tracks = await storage.getTracks();
     res.json(tracks);
   });
@@ -15,11 +24,7 @@ export async function registerRoutes(app: Express) {
     res.json(tracks);
   });
 
-  app.get("/api/tracks/:id", async (req, res) => {
-    const track = await storage.getTrack(parseInt(req.params.id));
-    if (!track) return res.status(404).json({ message: "Track not found" });
-    res.json(track);
-  });
+  
 
   // Artists
   app.get("/api/artists", async (req, res) => {

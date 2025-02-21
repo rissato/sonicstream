@@ -23,15 +23,15 @@ export function Sidebar() {
       <nav className="space-y-2">
         {navItems.map((item) => (
           <Link key={item.href} href={item.href}>
-            <a
+            <div
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer",
                 location === item.href && "bg-accent text-foreground"
               )}
             >
               <item.icon className="h-5 w-5" />
               {item.label}
-            </a>
+            </div>
           </Link>
         ))}
       </nav>

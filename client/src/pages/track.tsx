@@ -45,7 +45,7 @@ export default function Track({ params, setCurrentTrack }: TrackProps) {
   if (!tracks || !artists) return null;
 
   const track: Trk = tracks;
-  const artist: Artist = artists;
+  const artist: Artist = artists[0];
 
   console.log(track);
   return (

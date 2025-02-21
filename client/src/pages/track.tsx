@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Zap } from "lucide-react";
 import { mockTracks, mockArtists } from "@/lib/mock-data";
+import { ZapPaymentDialog } from "@/components/zap-payment-dialog";
 
 export default function Track() {
   const { id } = useParams();
-  const trackId = parseInt(id);
+  const trackId = parseInt(id || "0");
 
   const { data: track } = useQuery({
     queryKey: ["/api/tracks", trackId],
@@ -45,10 +44,7 @@ export default function Track() {
             <Button className="w-full">
               Play Track
             </Button>
-            <Button variant="outline" className="w-full">
-              <Zap className="mr-2 h-4 w-4" />
-              Send Zaps to Artist
-            </Button>
+            <ZapPaymentDialog artist={artist} />
           </div>
         </div>
       </div>

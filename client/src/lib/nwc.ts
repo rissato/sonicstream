@@ -5,7 +5,6 @@ export interface WalletConnection {
   isConnected: boolean;
 }
 
-// Wallet connection state schema
 export const walletConnectionSchema = z.object({
   walletPubkey: z.string(),
   isConnected: z.boolean(),
@@ -19,7 +18,7 @@ class NWCWalletService {
       // TODO: Implement actual NWC wallet connection
       // For now, return mock data
       this.connection = {
-        walletPubkey: "npub1...",
+        walletPubkey: "npub1qqqqqqyz0la75qqlx4f7gxjwq3ewx4qm9xhz0xhh8wh6gvqajhsvqxp0k",
         isConnected: true,
       };
       return this.connection;
@@ -39,12 +38,20 @@ class NWCWalletService {
     }
 
     try {
-      // TODO: Implement actual NWC payment
-      // For now, return mock success
-      console.log(`Mock payment of ${amount} to ${recipient}`);
+      // TODO: Implement actual NWC zap payment
+      console.log(`Sending ${amount} sats to ${recipient} via zap`);
+
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // For testing, succeed if amount is valid
+      if (amount <= 0) {
+        throw new Error("Invalid amount");
+      }
+
       return true;
     } catch (error) {
-      console.error("Payment failed:", error);
+      console.error("Zap payment failed:", error);
       throw new Error("Payment failed");
     }
   }

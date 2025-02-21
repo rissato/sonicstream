@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useWallet } from "@/lib/wallet-context";
 import { Artist } from "@shared/schema";
+import { PayButton } from "@getalby/bitcoin-connect-react";
 
 interface ZapPaymentDialogProps {
   artist: Artist;
@@ -21,24 +22,32 @@ interface ZapPaymentDialogProps {
 }
 
 export function ZapPaymentDialog({ artist, onSuccess }: ZapPaymentDialogProps) {
-  const { connection, makePayment } = useWallet();
+  const { provider, connect } = useWallet();
   const [amount, setAmount] = useState("1000");
   const [isOpen, setIsOpen] = useState(false);
-  const [isPaying, setIsPaying] = useState(false);
+  const [invoice, setInvoice] = useState<string | null>(null);
 
-  const handlePayment = async () => {
-    if (!connection) return;
-    
-    setIsPaying(true);
-    try {
-      const success = await makePayment(parseInt(amount), artist.walletAddress);
-      if (success) {
-        onSuccess?.();
-        setIsOpen(false);
-      }
-    } finally {
-      setIsPaying(false);
+  const handleCreateInvoice = async () => {
+    if (!provider) {
+      await connect();
+      return;
     }
+
+    try {
+      const inv = await provider.makeInvoice({
+        amount: parseInt(amount),
+        defaultMemo: `Support for ${artist.name}`,
+      });
+      setInvoice(inv.paymentRequest);
+    } catch (error) {
+      console.error("Failed to create invoice:", error);
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    onSuccess?.();
+    setIsOpen(false);
+    setInvoice(null);
   };
 
   return (
@@ -59,9 +68,9 @@ export function ZapPaymentDialog({ artist, onSuccess }: ZapPaymentDialogProps) {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            {!connection ? (
+            {!provider ? (
               <p className="text-sm text-muted-foreground">
-                Please connect your NWC wallet first to send zaps.
+                Please connect your wallet first to send zaps.
               </p>
             ) : (
               <>
@@ -78,13 +87,20 @@ export function ZapPaymentDialog({ artist, onSuccess }: ZapPaymentDialogProps) {
                     placeholder="Enter amount in sats"
                   />
                 </div>
-                <Button
-                  className="w-full"
-                  onClick={handlePayment}
-                  disabled={isPaying || !amount}
-                >
-                  {isPaying ? "Sending..." : "Send Zaps"}
-                </Button>
+                {invoice ? (
+                  <PayButton
+                    invoice={invoice}
+                    onPaid={handlePaymentSuccess}
+                  />
+                ) : (
+                  <Button
+                    className="w-full"
+                    onClick={handleCreateInvoice}
+                    disabled={!amount}
+                  >
+                    Create Payment Request
+                  </Button>
+                )}
               </>
             )}
           </div>

@@ -1,6 +1,5 @@
 import { Home, Search, Library, Wallet } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { WalletButton } from "../wallet-button";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -35,10 +34,6 @@ export function Sidebar() {
           </Link>
         ))}
       </nav>
-
-      <div className="mt-auto">
-        <WalletButton />
-      </div>
     </div>
   );
 }
